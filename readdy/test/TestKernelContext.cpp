@@ -192,6 +192,104 @@ TEST_P(TestKernelContextWithKernels, PotentialOrder1Map) {
 
 }
 
+TEST_F(TestKernelContext, ReactionDescriptorAddReactions) {
+    const auto prepareCtx = [](m::KernelContext &ctx, const std::string& descriptor, readdy::scalar rate){
+        ctx.particle_types().add("A", 1., 1.);
+        ctx.particle_types().add("B", 1., 1.);
+        ctx.particle_types().add("C", 1., 1.);
+        ctx.reactions().add(descriptor, rate);
+        ctx.configure();
+    };
+    {
+        m::KernelContext ctx;
+        auto decay = "mydecay:A->";
+        prepareCtx(ctx, decay, 2.);
+        const auto &r = ctx.reactions().order1_by_name("mydecay");
+        ASSERT_NE(r, nullptr);
+        EXPECT_EQ(r->getType(), m::reactions::ReactionType::Decay);
+        EXPECT_EQ(r->getNEducts(), 1);
+        EXPECT_EQ(r->getNProducts(), 0);
+        EXPECT_EQ(r->getEducts()[0], ctx.particle_types().id_of("A"));
+        EXPECT_EQ(r->getRate(), 2.);
+    }
+    {
+        m::KernelContext ctx;
+        auto conversion = "myconv: A -> B";
+        prepareCtx(ctx, conversion, 3.);
+        const auto &r = ctx.reactions().order1_by_name("myconv");
+        ASSERT_NE(r, nullptr);
+        EXPECT_EQ(r->getType(), m::reactions::ReactionType::Conversion);
+        EXPECT_EQ(r->getNEducts(), 1);
+        EXPECT_EQ(r->getNProducts(), 1);
+        EXPECT_EQ(r->getEducts()[0], ctx.particle_types().id_of("A"));
+        EXPECT_EQ(r->getProducts()[0], ctx.particle_types().id_of("B"));
+        EXPECT_EQ(r->getRate(), 3.);
+    }
+    {
+        m::KernelContext ctx;
+        auto fusion = "myfus: B +(1.2) B -> C [0.5, 0.5]";
+        prepareCtx(ctx, fusion, 4.);
+        const auto &r = ctx.reactions().order2_by_name("myfus");
+        ASSERT_NE(r, nullptr);
+        EXPECT_EQ(r->getType(), m::reactions::ReactionType::Fusion);
+        EXPECT_EQ(r->getNEducts(), 2);
+        EXPECT_EQ(r->getNProducts(), 1);
+        EXPECT_EQ(r->getEducts()[0], ctx.particle_types().id_of("B"));
+        EXPECT_EQ(r->getEducts()[1], ctx.particle_types().id_of("B"));
+        EXPECT_EQ(r->getProducts()[0], ctx.particle_types().id_of("C"));
+        EXPECT_EQ(r->getEductDistance(), 1.2);
+        EXPECT_EQ(r->getWeight1(), 0.5);
+        EXPECT_EQ(r->getWeight2(), 0.5);
+        EXPECT_EQ(r->getRate(), 4.);
+    }
+    {
+        m::KernelContext ctx;
+        auto fission = "myfiss: B -> C +(3.0) B [0.1, 0.9]";
+        prepareCtx(ctx, fission, 5.);
+        const auto &r = ctx.reactions().order1_by_name("myfiss");
+        ASSERT_NE(r, nullptr);
+        EXPECT_EQ(r->getType(), m::reactions::ReactionType::Fission);
+        EXPECT_EQ(r->getNEducts(), 1);
+        EXPECT_EQ(r->getNProducts(), 2);
+        EXPECT_EQ(r->getEducts()[0], ctx.particle_types().id_of("B"));
+        EXPECT_EQ(r->getProducts()[0], ctx.particle_types().id_of("C"));
+        EXPECT_EQ(r->getProducts()[1], ctx.particle_types().id_of("B"));
+        EXPECT_EQ(r->getProductDistance(), 3.0);
+        EXPECT_EQ(r->getWeight1(), 0.1);
+        EXPECT_EQ(r->getWeight2(), 0.9);
+        EXPECT_EQ(r->getRate(), 5.);
+    }
+    {
+        m::KernelContext ctx;
+        auto enzymatic = "myenz:A +(1.5) C -> B + C";
+        prepareCtx(ctx, enzymatic, 6.);
+        const auto &r = ctx.reactions().order2_by_name("myenz");
+        ASSERT_NE(r, nullptr);
+        EXPECT_EQ(r->getType(), m::reactions::ReactionType::Enzymatic);
+        EXPECT_EQ(r->getNEducts(), 2);
+        EXPECT_EQ(r->getNProducts(), 2);
+        EXPECT_EQ(r->getEducts()[0], ctx.particle_types().id_of("A"));
+        EXPECT_EQ(r->getEducts()[1], ctx.particle_types().id_of("C"));
+        EXPECT_EQ(r->getProducts()[0], ctx.particle_types().id_of("B"));
+        EXPECT_EQ(r->getProducts()[1], ctx.particle_types().id_of("C"));
+        EXPECT_EQ(r->getEductDistance(), 1.5);
+        EXPECT_EQ(r->getRate(), 6.);
+    }
+}
+
+TEST_F(TestKernelContext, ReactionDescriptorInvalidInputs) {
+    m::KernelContext ctx;
+    ctx.particle_types().add("A", 1., 1.);
+    ctx.particle_types().add("B", 1., 1.);
+    std::vector<std::string> inv = {"myinvalid: + A -> B", "noarrow: A B", " : Noname ->", "weights: A + A -> A [0.1, ]", "blub: A (3)+ A -> B"};
+    for (const auto &i : inv) {
+        EXPECT_ANY_THROW(ctx.reactions().add(i, 42.));
+    }
+    ctx.configure();
+    EXPECT_EQ(ctx.reactions().n_order1(), 0);
+    EXPECT_EQ(ctx.reactions().n_order2(), 0);
+}
+
 INSTANTIATE_TEST_CASE_P(TestKernelContext, TestKernelContextWithKernels,
                         ::testing::ValuesIn(readdy::testing::getKernelsToTest()));
 
