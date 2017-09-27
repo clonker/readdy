@@ -324,4 +324,3 @@ Particle GraphTopology::particleForVertex(const vertex &vertex) const {
 }
 }
 }
-
