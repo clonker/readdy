@@ -23,6 +23,10 @@ function set_this_up {
 
 set_this_up
 
+# workaround: to prevent other output than the actual file, call this once before,
+# so that packages are already downloaded and extracted
+conda build tools/conda-recipe --output > /dev/null 2>&1
+
 CONDA_PACKAGE_FILE=$(conda build tools/conda-recipe --output)
 echo "found conda package file $CONDA_PACKAGE_FILE"
 
