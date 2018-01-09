@@ -52,7 +52,6 @@ LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/reactions/ReactionRegistry.cpp"
 
 # topologies
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/Utils.cpp")
-LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/Topology.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/GraphTopology.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/TopologyRegistry.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/graph/Graph.cpp")
@@ -61,7 +60,6 @@ LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/potentials/BondedPot
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/potentials/AnglePotential.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/potentials/TorsionPotential.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/reactions/Recipe.cpp")
-LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/reactions/Operations.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/reactions/TopologyReactionActions.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/reactions/StructuralTopologyReaction.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/reactions/SpatialTopologyReaction.cpp")
