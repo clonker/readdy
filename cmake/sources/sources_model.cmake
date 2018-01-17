@@ -44,7 +44,6 @@ LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/compartments/CompartmentRegistr
 
 # potentials
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/potentials/Potentials.cpp")
-LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/potentials/PotentialRegistry.cpp")
 
 # reactions
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/reactions/Reactions.cpp")
@@ -55,7 +54,6 @@ LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/Utils.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/GraphTopology.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/TopologyRegistry.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/graph/Graph.cpp")
-LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/potentials/TopologyPotential.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/potentials/BondedPotential.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/potentials/AnglePotential.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/topologies/potentials/TorsionPotential.cpp")
@@ -76,9 +74,6 @@ LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/observables/ReactionCounts.cpp"
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/observables/Energy.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/observables/Positions.cpp")
 LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/observables/RadialDistribution.cpp")
-
-# internal sources
-LIST(APPEND READDY_MODEL_SOURCES "${SOURCES_DIR}/_internal/ObservableWrapper.cpp")
 
 # all sources
 LIST(APPEND READDY_ALL_SOURCES ${READDY_MODEL_SOURCES})
