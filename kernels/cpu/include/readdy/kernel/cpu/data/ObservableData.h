@@ -1,5 +1,5 @@
 /********************************************************************
- * Copyright © 2017 Computational Molecular Biology Group,          * 
+ * Copyright © 2018 Computational Molecular Biology Group,          *
  *                  Freie Universität Berlin (GER)                  *
  *                                                                  *
  * This file is part of ReaDDy.                                     *
@@ -23,47 +23,28 @@
 /**
  * << detailed description >>
  *
- * @file DefaultDataContainer.h
+ * @file ObservableData.h
  * @brief << brief description >>
  * @author clonker
- * @date 14.09.17
- * @copyright GNU Lesser General Public License v3.0
+ * @date 1/18/18
  */
+
 
 #pragma once
 
-#include <readdy/model/Particle.h>
-#include "DataContainer.h"
+#include <readdy/model/reactions/ReactionRecord.h>
+#include <readdy/common/common.h>
 
 namespace readdy {
 namespace kernel {
-namespace cpu_legacy {
+namespace cpu {
 namespace data {
 
-class NLDataContainer;
-
-class DefaultDataContainer : public EntryDataContainer {
-    using super = DataContainer<Entry>;
-    friend class NLDataContainer;
-public:
-
-    explicit DefaultDataContainer(EntryDataContainer *entryDataContainer);
-
-    DefaultDataContainer(const model::Context &context, const util::thread::Config &threadConfig);
-
-    void reserve(std::size_t n) override;
-
-    size_type addEntry(Entry &&entry) override;
-
-    void addParticles(const std::vector<Particle> &particles) override;
-
-    std::vector<size_type>
-    addTopologyParticles(const std::vector<TopologyParticle> &topologyParticles) override;
-
-    std::vector<size_type> update(DataUpdate &&update) override;
-
-    void displace(size_type entry, const Particle::pos_type &delta) override;
-
+struct ObservableData {
+    std::vector<readdy::model::reactions::ReactionRecord> reactionRecords;
+    readdy::model::reactions::reaction_counts_map reactionCounts;
+    scalar energy;
+    Matrix33 virial;
 };
 
 }

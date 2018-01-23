@@ -24,7 +24,6 @@ Created on 08.09.17
 
 @author: clonker
 """
-from readdy.api.conf.KernelConfiguration import CPULegacyKernelConfiguration as _CPULegacyKernelConfiguration
 from readdy.api.conf.KernelConfiguration import CPUKernelConfiguration as _CPUKernelConfiguration
 from readdy.api.conf.KernelConfiguration import NOOPKernelConfiguration as _NOOPKernelConfiguration
 from readdy.api.registry.observables import Observables as _Observables
@@ -75,9 +74,7 @@ class Simulation(object):
 
         self._progress = None
 
-        if kernel == "CPU_Legacy":
-            self._kernel_configuration = _CPULegacyKernelConfiguration()
-        elif kernel == "CPU":
+        if kernel == "CPU":
             self._kernel_configuration = _CPUKernelConfiguration()
         else:
             self._kernel_configuration = _NOOPKernelConfiguration()
@@ -383,14 +380,16 @@ class Simulation(object):
                     handle.enable_write_to_file(f, name, chunk_size)
                 scheme = conf.write_config_to_file(f).configure(timestep)
                 if self.show_progress:
-                    self._progress = _SimulationProgress(1 + n_steps // 100)
+                    self._progress = _SimulationProgress(n_steps // 10)
                     scheme.set_progress_callback(self._progress.callback)
+                    scheme.set_progress_output_stride(10)
                 scheme.run(n_steps)
         else:
             scheme = conf.configure(timestep)
             if self.show_progress:
-                self._progress = _SimulationProgress(1 + n_steps // 100)
+                self._progress = _SimulationProgress(n_steps // 10)
                 scheme.set_progress_callback(self._progress.callback)
+                scheme.set_progress_output_stride(10)
             scheme.run(n_steps)
         if self.show_progress:
             self._progress.finish()

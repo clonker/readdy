@@ -1,5 +1,5 @@
 /********************************************************************
- * Copyright © 2016 Computational Molecular Biology Group,          * 
+ * Copyright © 2018 Computational Molecular Biology Group,          *
  *                  Freie Universität Berlin (GER)                  *
  *                                                                  *
  * This file is part of ReaDDy.                                     *
@@ -23,28 +23,50 @@
 /**
  * << detailed description >>
  *
- * @file config.h
+ * @file Virial.h
  * @brief << brief description >>
  * @author clonker
- * @date 28.03.17
- * @copyright GNU Lesser General Public License v3.0
+ * @date 1/17/18
  */
+
 
 #pragma once
 
-namespace readdy {
-namespace kernel {
-namespace cpu_legacy {
-class CPULegacyKernel;
-namespace nl {
-class AdaptiveNeighborList;
-class CellDecompositionNeighborList;
-class ContiguousCLLNeighborList;
-class NeighborList;
-}
-using neighbor_list = readdy::kernel::cpu_legacy::nl::NeighborList;
-using adaptive_neighbor_list = readdy::kernel::cpu_legacy::nl::AdaptiveNeighborList;
-using cell_decomposition_neighbor_list = readdy::kernel::cpu_legacy::nl::CellDecompositionNeighborList;
-}
-}
-}
+#include <readdy/common/macros.h>
+#include "Observable.h"
+
+NAMESPACE_BEGIN(readdy)
+NAMESPACE_BEGIN(model)
+NAMESPACE_BEGIN(observables)
+
+class Virial : public Observable<Matrix33> {
+    using super = Observable<Matrix33>;
+public:
+
+    Virial(Kernel* kernel, stride_type stride);
+
+    Virial(Virial &&) = default;
+    Virial& operator=(Virial &&) = default;
+    Virial(const Virial &) = delete;
+    Virial &operator=(const Virial &) = delete;
+
+    ~Virial();
+
+    std::string type() const override;
+
+    void flush() override;
+
+protected:
+    void initialize(Kernel * kernel) override;
+
+    void initializeDataSet(File &file, const std::string &dataSetName, stride_type flushStride) override;
+
+    void append() override;
+
+    struct Impl;
+    std::unique_ptr<Impl> pimpl;
+};
+
+NAMESPACE_END(observables)
+NAMESPACE_END(model)
+NAMESPACE_END(readdy)

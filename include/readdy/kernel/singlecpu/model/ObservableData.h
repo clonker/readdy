@@ -1,5 +1,5 @@
 /********************************************************************
- * Copyright © 2016 Computational Molecular Biology Group,          *
+ * Copyright © 2018 Computational Molecular Biology Group,          *
  *                  Freie Universität Berlin (GER)                  *
  *                                                                  *
  * This file is part of ReaDDy.                                     *
@@ -23,30 +23,34 @@
 /**
  * << detailed description >>
  *
- * @file CPUTestMain.cpp
+ * @file ObservableData.h
  * @brief << brief description >>
  * @author clonker
- * @date 23.06.16
+ * @date 1/17/18
  */
 
-#include <readdy/testing/Utils.h>
-#include <readdy/plugin/KernelProvider.h>
-#include "gtest/gtest.h"
 
-int perform_tests(int argc, char **argv) {
-    readdy::plugin::KernelProvider::getInstance().loadKernelsFromDirectory(readdy::testing::getPluginsDirectory());
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+#pragma once
+
+#include <readdy/common/common.h>
+#include <readdy/model/reactions/ReactionRecord.h>
+
+namespace readdy {
+namespace kernel {
+namespace scpu {
+namespace model {
+
+struct ObservableData {
+
+    using reaction_counts_map = readdy::model::reactions::reaction_counts_map;
+
+    scalar energy = 0;
+    std::vector<readdy::model::reactions::ReactionRecord> reactionRecords{};
+    reaction_counts_map reactionCounts {};
+    Matrix33 virial {};
+};
+
 }
-
-int main(int argc, char **argv) {
-    spdlog::set_sync_mode();
-    auto console = spdlog::stdout_color_mt("console");
-    console->set_level(spdlog::level::warn);
-    console->set_pattern("[          ] [%Y-%m-%d %H:%M:%S] [%t] [%l] %v");
-
-    int result = perform_tests(argc, argv);
-
-    spdlog::drop_all();
-    return result;
+}
+}
 }
