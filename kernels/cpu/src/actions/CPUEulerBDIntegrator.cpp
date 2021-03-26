@@ -68,8 +68,10 @@ void CPUEulerBDIntegrator::perform() {
         for (auto it = entry_begin; it != entry_end; ++it, ++idx) {
             if(!it->deactivated) {
                 const scalar D = context.particleTypes().diffusionConstantOf(it->type);
-                const auto randomDisplacement = std::sqrt(2. * D * dt) * rnd::normal3<readdy::scalar>(0, 1);
-                const auto deterministicDisplacement = it->force * dt * D / kbt;
+                auto randomDisplacement = std::sqrt(2. * D * dt) * rnd::normal3<readdy::scalar>(0, 1);
+                auto deterministicDisplacement = it->force * dt * D / kbt;
+                randomDisplacement[2] = 0.;
+                deterministicDisplacement[2] = 0.;
                 it->pos += randomDisplacement + deterministicDisplacement;
                 bcs::fixPosition(it->pos, box, pbc);
             }

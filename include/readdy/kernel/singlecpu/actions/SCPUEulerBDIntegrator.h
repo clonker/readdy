@@ -67,10 +67,12 @@ public:
         for(auto& entry : *pd) {
             if(!entry.is_deactivated()) {
                 const scalar D = context.particleTypes().diffusionConstantOf(entry.type);
-                const auto randomDisplacement = std::sqrt(2. * D * _timeStep) *
+                auto randomDisplacement = std::sqrt(2. * D * _timeStep) *
                                                 (readdy::model::rnd::normal3<readdy::scalar>());
+                randomDisplacement[2] = 0.;
                 entry.pos += randomDisplacement;
-                const auto deterministicDisplacement = entry.force * _timeStep * D / kbt;
+                auto deterministicDisplacement = entry.force * _timeStep * D / kbt;
+                deterministicDisplacement[2] = 0;
                 entry.pos += deterministicDisplacement;
                 bcs::fixPosition(entry.pos, box, pbc);
             }
